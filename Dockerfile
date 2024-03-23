@@ -18,6 +18,8 @@ WORKDIR /root/
 
 COPY --from=builder /app/main .
 
+RUN touch /tmp/healthy
+
 EXPOSE 8080
 
 CMD ["./main"]
