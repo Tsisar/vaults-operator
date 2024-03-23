@@ -1,0 +1,27 @@
+{
+  "data": {
+    "vaults": [
+      {
+        "id": "0xfed8e57d02af00cabbb9418f9c5e1928b4d14f01",
+        "strategies": [
+          {
+            "id": "0x9c44eb1ab7b315fa5cb890a70a064ab1071af412",
+            "assetsPart": "0"
+          },
+          {
+            "id": "0xa6aaf7f813fcaa99ad600d8c4d8ecef46681a5cb",
+            "assetsPart": "0,1"
+          },
+          {
+            "id": "0xdc3d0d8f12e39eb6cff6db65909aa022c8b1df8c",
+            "assetsPart": "0,2"
+          },
+          {
+            "id": "0xdf1c05b80c54bdd0f778b17beb73c66770599d02",
+            "assetsPart": "0,7"
+          }
+        ]
+      }
+    ]
+  }
+}
