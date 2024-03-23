@@ -27,7 +27,6 @@ type Addresses struct {
 	Data Data `json:"data"`
 }
 
-// Функція для читання та модифікації JSON
 func readAndModifyJSON(filePath string) (*Addresses, error) {
 	bytes, err := graph.ExecuteQuery()
 	if err != nil {
@@ -39,14 +38,13 @@ func readAndModifyJSON(filePath string) (*Addresses, error) {
 		return nil, err
 	}
 
-	// Тут можна додати логіку модифікації JSON
-	// Наприклад, додати assetsPart до кожної стратегії
+	// Modify the data
 
 	return &addresses, nil
 }
 
 func main() {
-	// Створення серверу і роута
+	// Create a new Gin server
 	r := gin.Default()
 	r.GET("/data-json", func(c *gin.Context) {
 		modifiedData, err := readAndModifyJSON("data.json") // Замініть на свій файл
@@ -57,7 +55,7 @@ func main() {
 		c.JSON(http.StatusOK, modifiedData)
 	})
 
-	// Запуск серверу
+	// Run the server
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal("Failed to run server: ", err)
 	}
