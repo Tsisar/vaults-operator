@@ -20,6 +20,8 @@ COPY --from=builder /app/main .
 
 RUN touch /tmp/healthy
 
+ENV RUNNING_IN_CONTAINER=true
+
 EXPOSE 8080
 
 CMD ["./main"]
