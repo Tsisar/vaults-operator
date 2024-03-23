@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"vaults-operator/graph"
 )
 
 type Strategy struct {
@@ -29,7 +29,7 @@ type Addresses struct {
 
 // Функція для читання та модифікації JSON
 func readAndModifyJSON(filePath string) (*Addresses, error) {
-	bytes, err := ioutil.ReadFile(filePath)
+	bytes, err := graph.ExecuteQuery()
 	if err != nil {
 		return nil, err
 	}
