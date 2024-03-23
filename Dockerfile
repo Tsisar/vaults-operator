@@ -3,6 +3,8 @@ FROM golang:latest as builder
 WORKDIR /app
 
 COPY go.mod go.sum ./
+COPY data.json ./
+
 RUN go mod download
 
 COPY . .
