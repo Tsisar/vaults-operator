@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"vaults-operator/config"
 	"vaults-operator/utils"
 )
@@ -74,13 +72,7 @@ func main() {
 	// Create a new Gin server
 	r := gin.Default()
 
-	if os.Getenv("RUNNING_IN_CONTAINER") != "true" {
-		if err := godotenv.Load(); err != nil {
-			r.LoadHTMLGlob("templates/*")
-		} else {
-			r.LoadHTMLGlob("app/templates/*")
-		}
-	}
+	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/data-json", func(c *gin.Context) {
 		data, err := readJson()
