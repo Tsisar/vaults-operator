@@ -2,7 +2,6 @@ package graph
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,13 +12,14 @@ import (
 var query = `{"query": "{ vaults { id, strategies { id } } }"}`
 
 type Strategy struct {
-	ID         string `json:"id"`
-	AssetsPart string `json:"assetsPart,omitempty"`
+	ID         string  `json:"id"`
+	AssetsPart float64 `json:"assetsPart,omitempty"`
 }
 
 type Vault struct {
-	ID         string     `json:"id"`
-	Strategies []Strategy `json:"strategies"`
+	ID            string     `json:"id"`
+	UseAssetsPart bool       `json:"useAssetsPart,omitempty"`
+	Strategies    []Strategy `json:"strategies"`
 }
 
 type Data struct {
@@ -28,15 +28,6 @@ type Data struct {
 
 type Addresses struct {
 	Data Data `json:"data"`
-}
-
-func ParseAddresses(data []byte) (*Addresses, error) {
-	var response Addresses
-	if err := json.Unmarshal(data, &response); err != nil {
-		return nil, fmt.Errorf("error parsing JSON: %v", err)
-	}
-
-	return &response, nil
 }
 
 func ExecuteQuery() ([]byte, error) {

@@ -9,6 +9,7 @@ import (
 var AppConfig *Config
 
 type Config struct {
+	Port            string
 	GraphQlEndpoint string
 }
 
@@ -27,11 +28,13 @@ func init() {
 		utils.Log.Fatalf("Error loading config: %s", err)
 	}
 
+	utils.Log.Debugf("Port: %s", AppConfig.Port)
 	utils.Log.Debugf("GraphQl endpoint: %s", AppConfig.GraphQlEndpoint)
 }
 
 func LoadConfig() (*Config, error) {
 	return &Config{
+		Port:            GetStringEnv("PORT", "8080"),
 		GraphQlEndpoint: GetStringEnv("GRAPHQL_ENDPOINT", "https://dev-graph.fathom.fi/subgraphs/name/vaults-subgraph"),
 	}, nil
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Vaults</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/data-json')
+                .then(response => response.json())
+                .then(data => {
+                    const vault = data.data.vaults[0]; // For simplicity, we are taking the first vault only
+
+                    document.getElementById('vaultId').textContent = `Vault ID: ${vault.id}`;
+                    document.getElementById('useAssetsPart').checked = vault.useAssetsPart;
+
+                    const strategiesHtml = vault.strategies.map(strategy => `
+                    <div>
+                        Strategy ID: ${strategy.id} <br>
+                        Assets Part: <input type="number" name="assetsPart-${strategy.id}" value="${strategy.assetsPart}" data-strategy-id="${strategy.id}">
+                    </div>
+                `).join('');
+
+                    document.getElementById('strategies').innerHTML = strategiesHtml;
+                });
+
+            document.getElementById('saveButton').addEventListener('click', function() {
+                const vaultId = document.getElementById('vaultId').textContent.split(": ")[1];
+                const strategiesInputs = document.querySelectorAll('[data-strategy-id]');
+                const strategies = Array.from(strategiesInputs).map(input => ({
+                    id: input.getAttribute('data-strategy-id'),
+                    assetsPart: parseFloat(input.value),
+                }));
+
+                const updatedData = {
+                    data: {
+                        vaults: [
+                            {
+                                id: vaultId,
+                                useAssetsPart: document.getElementById('useAssetsPart').checked,
+                                strategies: strategies,
+                            },
+                        ],
+                    },
+                };
+
+                fetch('/update-json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Data updated successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred! Check the console for details.');
+                    });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Edit Vault</h1>
+<div id="vaultId">Vault ID: </div>
+Use Assets Part: <input type="checkbox" id="useAssetsPart"><br>
+<div id="strategies"></div>
+<button type="button" id="saveButton">Save</button>
+</body>
+</html>
