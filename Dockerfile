@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 COPY data.json ./
+COPY templates templates
 
 RUN go mod download
 
