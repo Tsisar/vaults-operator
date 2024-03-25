@@ -136,8 +136,6 @@ func updateVaultsData(newData Addresses) {
 	for i := range db.Data.Vaults {
 		db.Data.Vaults[i].PartsUpdated = true
 	}
-
-	utils.Log.Infof("Data updated successfully %v", db)
 }
 
 func executeQuery() ([]byte, error) {
