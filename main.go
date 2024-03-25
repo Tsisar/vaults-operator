@@ -22,6 +22,7 @@ type Strategy struct {
 type Vault struct {
 	ID            string     `json:"id"`
 	UseAssetsPart bool       `json:"useAssetsPart,omitempty"`
+	PartsUpdated  bool       `json:"partsUpdated,omitempty"`
 	Strategies    []Strategy `json:"strategies"`
 }
 
@@ -52,6 +53,7 @@ func readJson() (*Addresses, error) {
 		for _, dbVault := range db.Data.Vaults {
 			if vault.ID == dbVault.ID {
 				addresses.Data.Vaults[i].UseAssetsPart = dbVault.UseAssetsPart
+				addresses.Data.Vaults[i].PartsUpdated = dbVault.PartsUpdated
 				for j, strategy := range vault.Strategies {
 					for _, dbStrategy := range dbVault.Strategies {
 						if strategy.ID == dbStrategy.ID {
@@ -75,6 +77,19 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/data-json", func(c *gin.Context) {
+		data, err := readJson()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, data)
+
+		for i := range db.Data.Vaults {
+			db.Data.Vaults[i].PartsUpdated = false
+		}
+	})
+
+	r.GET("/update-json", func(c *gin.Context) {
 		data, err := readJson()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -116,6 +131,13 @@ func main() {
 
 func updateVaultsData(newData Addresses) {
 	db = newData
+
+	//TODO: move it to frontend
+	for i := range db.Data.Vaults {
+		db.Data.Vaults[i].PartsUpdated = true
+	}
+
+	utils.Log.Infof("Data updated successfully %v", db)
 }
 
 func executeQuery() ([]byte, error) {

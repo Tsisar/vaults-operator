@@ -35,6 +35,6 @@ func init() {
 func LoadConfig() (*Config, error) {
 	return &Config{
 		Port:            GetStringEnv("PORT", "8080"),
-		GraphQlEndpoint: GetStringEnv("GRAPHQL_ENDPOINT", "https://dev-graph.fathom.fi/subgraphs/name/vaults-subgraph"),
+		GraphQlEndpoint: GetStringEnv("GRAPHQL_ENDPOINT", "http://graphql.graph-node/subgraphs/name/vaults-subgraph"),
 	}, nil
 }

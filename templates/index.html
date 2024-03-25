@@ -4,7 +4,7 @@
     <title>Edit Vaults</title>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/data-json')
+            fetch('/update-json')
                 .then(response => response.json())
                 .then(data => {
                     const vault = data.data.vaults[0]; // For simplicity, we are taking the first vault only
