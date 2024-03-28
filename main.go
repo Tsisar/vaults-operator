@@ -15,15 +15,15 @@ import (
 var query = `{"query": "{ vaults { id, strategies { id } } }"}`
 
 type Strategy struct {
-	ID         string  `json:"id"`
-	AssetsPart float64 `json:"assetsPart,omitempty"`
+	ID            string  `json:"id"`
+	AssetsPercent float64 `json:"assetsPercent,omitempty"`
 }
 
 type Vault struct {
-	ID            string     `json:"id"`
-	UseAssetsPart bool       `json:"useAssetsPart,omitempty"`
-	PartsUpdated  bool       `json:"partsUpdated,omitempty"`
-	Strategies    []Strategy `json:"strategies"`
+	ID              string     `json:"id"`
+	DivideByPercent bool       `json:"divideByPercent,omitempty"`
+	PercentUpdated  bool       `json:"percentUpdated,omitempty"`
+	Strategies      []Strategy `json:"strategies"`
 }
 
 type Data struct {
@@ -52,12 +52,12 @@ func readJson() (*Addresses, error) {
 	for i, vault := range addresses.Data.Vaults {
 		for _, dbVault := range db.Data.Vaults {
 			if vault.ID == dbVault.ID {
-				addresses.Data.Vaults[i].UseAssetsPart = dbVault.UseAssetsPart
-				addresses.Data.Vaults[i].PartsUpdated = dbVault.PartsUpdated
+				addresses.Data.Vaults[i].DivideByPercent = dbVault.DivideByPercent
+				addresses.Data.Vaults[i].PercentUpdated = dbVault.PercentUpdated
 				for j, strategy := range vault.Strategies {
 					for _, dbStrategy := range dbVault.Strategies {
 						if strategy.ID == dbStrategy.ID {
-							addresses.Data.Vaults[i].Strategies[j].AssetsPart = dbStrategy.AssetsPart
+							addresses.Data.Vaults[i].Strategies[j].AssetsPercent = dbStrategy.AssetsPercent
 							break
 						}
 					}
@@ -85,7 +85,7 @@ func main() {
 		c.JSON(http.StatusOK, data)
 
 		for i := range db.Data.Vaults {
-			db.Data.Vaults[i].PartsUpdated = false
+			db.Data.Vaults[i].PercentUpdated = false
 		}
 	})
 
@@ -134,7 +134,7 @@ func updateVaultsData(newData Addresses) {
 
 	//TODO: move it to frontend
 	for i := range db.Data.Vaults {
-		db.Data.Vaults[i].PartsUpdated = true
+		db.Data.Vaults[i].PercentUpdated = true
 	}
 }
 
