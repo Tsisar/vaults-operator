@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Vault</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .vault-id {
+            background-color: #e7e7e7;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .divide-by-percent {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .strategy {
+            padding: 10px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .strategy:last-child {
+            border-bottom: none;
+        }
+        .percent {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .strategy-id {
+            color: #007BFF;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/update-json')
+                .then(response => response.json())
+                .then(data => {
+                    const vault = data.data.vaults[0]; // For simplicity, we are taking the first vault only
+
+                    document.getElementById('vaultId').textContent = `Vault ID: ${vault.id}`;
+                    document.getElementById('divideByPercent').checked = vault.divideByPercent;
+
+                    const strategiesHtml = vault.strategies.map(strategy => `
+                    <div class="strategy">
+                        <span class="strategy-id">Strategy ID: ${strategy.id}</span><br>
+                        Percent 0-100: <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" min="0" max="100" data-strategy-id="${strategy.id}"> %
+                    </div>
+                `).join('');
+
+                    document.getElementById('strategies').innerHTML = strategiesHtml;
+                });
+
+            document.getElementById('saveButton').addEventListener('click', function() {
+                const vaultId = document.getElementById('vaultId').textContent.split(": ")[1];
+                const strategiesInputs = document.querySelectorAll('[data-strategy-id]');
+                const strategies = Array.from(strategiesInputs).map(input => ({
+                    id: input.getAttribute('data-strategy-id'),
+                    assetsPercent: parseFloat(input.value),
+                }));
+
+                const updatedData = {
+                    data: {
+                        vaults: [
+                            {
+                                id: vaultId,
+                                divideByPercent: document.getElementById('divideByPercent').checked,
+                                strategies: strategies,
+                            },
+                        ],
+                    },
+                };
+
+                fetch('/update-json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Data updated successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred! Check the console for details.');
+                    });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>Edit Vault</h1>
+    <div class="vault-id" id="vaultId">Vault ID: </div>
+    <div class="divide-by-percent">Divide by percent: <label for="divideByPercent"></label><input type="checkbox" id="divideByPercent"><br> </div>
+    <div id="strategies"></div>
+    <button class="button" id="saveButton">Save</button>
+</div>
+</body>
+</html>
