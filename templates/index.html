@@ -1,7 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>Edit Vaults</title>
+    <meta charset="UTF-8">
+    <title>Edit Vault</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .vault-id {
+            background-color: #e7e7e7;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .divide-by-percent {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .strategy {
+            padding: 10px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .strategy:last-child {
+            border-bottom: none;
+        }
+        .percent {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .strategy-id {
+            color: #007BFF;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/update-json')
@@ -13,9 +67,9 @@
                     document.getElementById('divideByPercent').checked = vault.divideByPercent;
 
                     const strategiesHtml = vault.strategies.map(strategy => `
-                    <div>
-                        Strategy ID: ${strategy.id} <br>
-                        Assets Part: <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" data-strategy-id="${strategy.id}">
+                    <div class="strategy">
+                        <span class="strategy-id">Strategy ID: ${strategy.id}</span><br>
+                        <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" data-strategy-id="${strategy.id}"> %
                     </div>
                 `).join('');
 
@@ -62,10 +116,12 @@
     </script>
 </head>
 <body>
-<h1>Edit Vault</h1>
-<div id="vaultId">Vault ID: </div>
-Use Assets Part: <input type="checkbox" id="divideByPercent"><br>
-<div id="strategies"></div>
-<button type="button" id="saveButton">Save</button>
+<div class="container">
+    <h1>Edit Vault</h1>
+    <div class="vault-id" id="vaultId">Vault ID: </div>
+    <div class="divide-by-percent">Divide by percent: <label for="divideByPercent"></label><input type="checkbox" id="divideByPercent"><br> </div>
+    <div id="strategies"></div>
+    <button class="button">Save</button>
+</div>
 </body>
 </html>
