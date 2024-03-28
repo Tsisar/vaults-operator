@@ -69,7 +69,7 @@
                     const strategiesHtml = vault.strategies.map(strategy => `
                     <div class="strategy">
                         <span class="strategy-id">Strategy ID: ${strategy.id}</span><br>
-                        <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" data-strategy-id="${strategy.id}"> %
+                        Percent 0-100: <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" min="0" max="100" data-strategy-id="${strategy.id}"> %
                     </div>
                 `).join('');
 
@@ -121,7 +121,7 @@
     <div class="vault-id" id="vaultId">Vault ID: </div>
     <div class="divide-by-percent">Divide by percent: <label for="divideByPercent"></label><input type="checkbox" id="divideByPercent"><br> </div>
     <div id="strategies"></div>
-    <button class="button">Save</button>
+    <button class="button" id="saveButton">Save</button>
 </div>
 </body>
 </html>
