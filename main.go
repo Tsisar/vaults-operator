@@ -95,7 +95,6 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		utils.Log.Debugf("Data: %v", data)
 		c.JSON(http.StatusOK, data)
 	})
 
@@ -106,7 +105,6 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
 		}
-		utils.Log.Debugf("Data: %v", updatedData)
 		updateVaultsData(updatedData)
 
 		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Data updated successfully"})
@@ -145,7 +143,7 @@ func executeQuery() ([]byte, error) {
 		return nil, fmt.Errorf("error making request: %v", err)
 	}
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
+		err = Body.Close()
 		if err != nil {
 			utils.Log.Errorf("Error closing response body: %v", err)
 		}
