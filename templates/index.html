@@ -23,11 +23,11 @@
         .vault-id {
             background-color: #e7e7e7;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         .divide-by-percent {
             padding: 10px;
-            margin-bottom: 20px;
+            border-bottom: 1px solid #e7e7e7;
         }
         .strategy {
             padding: 10px;
@@ -35,10 +35,6 @@
         }
         .strategy:last-child {
             border-bottom: none;
-        }
-        .percent {
-            padding: 10px;
-            margin-bottom: 20px;
         }
         .strategy-id {
             color: #007BFF;
@@ -61,40 +57,47 @@
             fetch('/update-json')
                 .then(response => response.json())
                 .then(data => {
-                    const vault = data.data.vaults[0]; // For simplicity, we are taking the first vault only
+                    let vaultsContainer = document.getElementById('strategies');
+                    vaultsContainer.innerHTML = '';
 
-                    document.getElementById('vaultId').textContent = `Vault ID: ${vault.id}`;
-                    document.getElementById('divideByPercent').checked = vault.divideByPercent;
+                    data.data.vaults.forEach(vault => {
+                        let vaultHtml = `<div class='vault' data-vault-id="${vault.id}">
+                                    <div class='vault-id'>Vault ID: ${vault.id}</div>
+                                    <div class='divide-by-percent'>Divide by percent: <input type="checkbox" id="divideByPercent-${vault.id}" ${vault.divideByPercent ? 'checked' : ''}></div>
+                                    <div class='strategies'>`;
 
-                    const strategiesHtml = vault.strategies.map(strategy => `
+                        const strategiesHtml = vault.strategies.map(strategy => `
                     <div class="strategy">
                         <span class="strategy-id">Strategy ID: ${strategy.id}</span><br>
-                        Percent 0-100: <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" min="0" max="100" data-strategy-id="${strategy.id}"> %
+                        Percent 0-100: <input type="number" name="assetsPercent-${strategy.id}" value="${strategy.assetsPercent}" min="0" max="100" data-strategy-id="${strategy.id}" data-vault-id="${vault.id}"> %
                     </div>
                 `).join('');
 
-                    document.getElementById('strategies').innerHTML = strategiesHtml;
+                        vaultHtml += `${strategiesHtml}</div></div>`;
+                        vaultsContainer.innerHTML += vaultHtml;
+                    });
                 });
 
             document.getElementById('saveButton').addEventListener('click', function() {
-                const vaultId = document.getElementById('vaultId').textContent.split(": ")[1];
-                const strategiesInputs = document.querySelectorAll('[data-strategy-id]');
-                const strategies = Array.from(strategiesInputs).map(input => ({
-                    id: input.getAttribute('data-strategy-id'),
-                    assetsPercent: parseFloat(input.value),
-                }));
+                const vaultsElements = document.querySelectorAll('.vault');
+                const updatedData = { data: { vaults: [] } };
 
-                const updatedData = {
-                    data: {
-                        vaults: [
-                            {
-                                id: vaultId,
-                                divideByPercent: document.getElementById('divideByPercent').checked,
-                                strategies: strategies,
-                            },
-                        ],
-                    },
-                };
+                vaultsElements.forEach(vaultElement => {
+                    const vaultId = vaultElement.getAttribute('data-vault-id');
+                    const divideByPercent = vaultElement.querySelector(`#divideByPercent-${vaultId}`).checked;
+                    const strategiesInputs = vaultElement.querySelectorAll('.strategy input[type="number"]');
+
+                    const strategies = Array.from(strategiesInputs).map(input => ({
+                        id: input.getAttribute('name').split('-')[1],
+                        assetsPercent: parseFloat(input.value),
+                    }));
+
+                    updatedData.data.vaults.push({
+                        id: vaultId,
+                        divideByPercent: divideByPercent,
+                        strategies: strategies,
+                    });
+                });
 
                 fetch('/update-json', {
                     method: 'POST',
@@ -118,8 +121,6 @@
 <body>
 <div class="container">
     <h1>Edit Vault</h1>
-    <div class="vault-id" id="vaultId">Vault ID: </div>
-    <div class="divide-by-percent">Divide by percent: <label for="divideByPercent"></label><input type="checkbox" id="divideByPercent"><br> </div>
     <div id="strategies"></div>
     <button class="button" id="saveButton">Save</button>
 </div>

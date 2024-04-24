@@ -95,6 +95,7 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		utils.Log.Debugf("Data: %v", data)
 		c.JSON(http.StatusOK, data)
 	})
 
@@ -105,7 +106,7 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
 		}
-
+		utils.Log.Debugf("Data: %v", updatedData)
 		updateVaultsData(updatedData)
 
 		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Data updated successfully"})
